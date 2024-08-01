@@ -1,0 +1,43 @@
+name: Build and Upload Artifact
+
+on: 
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Set up JDK 21
+      uses: actions/setup-java@v3
+      with:
+        distribution: 'temurin'
+        java-version: '21'
+
+    - name: Grant execute permission for gradlew
+      run: chmod +x ./gradlew
+
+    - name: Setup Git
+      run: |
+       git config --global user.email "abdullahfatihn@gmail.com"
+       git config --global user.name "AFatihN537"
+
+    - name: Apply Patches
+      run: ./gradlew build
+
+    - name: Upload build artifacts
+      uses: actions/upload-artifact@v2
+      with:
+        name: build-artifacts
+        path: |
+         fabric/build/libs/*
+         neoforge/build/libs/*
+        
